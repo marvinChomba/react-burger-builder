@@ -1,19 +1,58 @@
 import React, { Component } from "react";
 import Burger from "../../components/Burger/Burger";
+import BurgerControls from "../../components/Burger/BurgerControls/BurgerControls";
+import Aux from "../../hoc/Aux"
+
+const PRICES = {
+    salad:0.5,
+    cheese:1.0,
+    meat:1.2,
+    bacon:1.1,
+}
 
 class BurgerBuilder extends Component {
     state = {
         ingredients: {
-            salad:1,
-            cheese:1,
-            meat:1,
-            bacon:1,
+            salad:0,
+            cheese:0,
+            meat:0,
+            bacon:0,
         },
-        totalAmount:0,
+        totalAmount:4,
+    }
+    addIngredientHandler = type => {
+        const ingredients = {...this.state.ingredients};
+        const originalValue = ingredients[type];
+        const originalTotal = this.state.totalAmount;
+        const newTotal = originalTotal + PRICES[type]
+        const newValue = originalValue + 1; 
+        ingredients[type] = newValue;
+        this.setState({
+            ingredients:ingredients,
+            totalAmount:newTotal
+        })
+    }
+    removeIngredientHandler = type => {
+        const ingredients = { ...this.state.ingredients };
+        if(!ingredients[type]) {
+            return;
+        }
+        const originalValue = ingredients[type];
+        const newValue = originalValue - 1;
+        const initialAmount = this.state.totalAmount;
+        const newTotal = initialAmount - PRICES[type]
+        ingredients[type] = newValue;
+        this.setState({
+            ingredients: ingredients,
+            totalAmount: newTotal
+        })
     }
     render () {
         return (
-            <Burger ingredients={this.state.ingredients} />
+            <Aux>
+                <Burger ingredients={this.state.ingredients} />
+                <BurgerControls ingredients={this.state.ingredients} adder={this.addIngredientHandler} remover={this.removeIngredientHandler} total={this.state.totalAmount}/>
+            </Aux>
         )
     }
 }
