@@ -19,6 +19,7 @@ class BurgerBuilder extends Component {
             bacon:0,
         },
         totalAmount:4,
+        purchasable:false,
     }
     addIngredientHandler = type => {
         const ingredients = {...this.state.ingredients};
@@ -27,6 +28,16 @@ class BurgerBuilder extends Component {
         const newTotal = originalTotal + PRICES[type]
         const newValue = originalValue + 1; 
         ingredients[type] = newValue;
+        const values = Object.values(ingredients)
+        // let purchasable = false
+        for (let value of values) {
+            if (value) {
+                // purchasable = true
+                this.setState({
+                    purchasable:true
+                })
+            }
+        }
         this.setState({
             ingredients:ingredients,
             totalAmount:newTotal
@@ -42,6 +53,14 @@ class BurgerBuilder extends Component {
         const initialAmount = this.state.totalAmount;
         const newTotal = initialAmount - PRICES[type]
         ingredients[type] = newValue;
+        const values = Object.values(ingredients)
+        // let purchasable = false
+        let sum = values.reduce((sum,value) => sum+=value,0)
+        if (!sum) {
+            this.setState({
+                purchasable:false
+            })
+        }
         this.setState({
             ingredients: ingredients,
             totalAmount: newTotal
@@ -51,7 +70,7 @@ class BurgerBuilder extends Component {
         return (
             <Aux>
                 <Burger ingredients={this.state.ingredients} />
-                <BurgerControls ingredients={this.state.ingredients} adder={this.addIngredientHandler} remover={this.removeIngredientHandler} total={this.state.totalAmount}/>
+                <BurgerControls ingredients={this.state.ingredients} adder={this.addIngredientHandler} remover={this.removeIngredientHandler} total={this.state.totalAmount} purchasable={this.state.purchasable}/>
             </Aux>
         )
     }
